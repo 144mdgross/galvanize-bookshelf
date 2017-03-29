@@ -149,7 +149,7 @@ suite('part2 routes', () => {
         delete res.body.updatedAt;
       })
       .expect(200, {
-        id: 9,
+        id: 11,
         title: 'Think Python',
         author: 'Allen B. Downey',
         genre: 'Python',
