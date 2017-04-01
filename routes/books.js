@@ -1,4 +1,4 @@
-'use strict';
+ 'use strict';
 
 const express = require('express');
 
@@ -31,7 +31,6 @@ router.get('/:id', (req, res, _next) => {
 })
 // note i changed the test to have an id matching b/c i inserted it twice through testing it seems....maybe there is a better way?
 router.post('/', (req, res, _next) => {
-  console.log('anybody here?');
   knex('books')
   .insert({
     title: req.body.title,
@@ -41,7 +40,6 @@ router.post('/', (req, res, _next) => {
     cover_url: req.body.coverUrl
   }, '*')
   .then(post => {
-    console.log(post, 'anything here?');
     let camelPost = humps.camelizeKeys(post)
     res.send(camelPost[0])
   })
