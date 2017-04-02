@@ -10,7 +10,6 @@ const humps = require('humps')
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-console.log('anything?');
 router.get('/', (req, res, next) => {
   knex('favorites')
    .join('books', 'books.id', 'book_id')
@@ -24,13 +23,21 @@ router.get('/', (req, res, next) => {
 })
 
 router.get('/check', (req, res, next) => {
-  // this is where I stopped. Set this up to taken an id. 
-  let bookId = req.query.bookId
+  // this is where I stopped. Set this up to taken an id.
+let bookId = req.query.bookId
   knex('favorites')
    .join('books', 'books.id', 'book_id')
-   .then((books) => {
-     let camelBooks = humps.camelizeKeys(books)
-     res.send(camelBooks);
+   .where('book_id', `${bookId}`)
+   .then((book) => {
+     if(book.length > 0) {
+     res.status(200)
+       .set('Content-Type', 'application/json')
+       .send('true')
+   } else {
+     res.status(200)
+       .set('Content-Type', 'application/json')
+       .send('false')
+   }
    })
    .catch((err) => {
      next(err);
