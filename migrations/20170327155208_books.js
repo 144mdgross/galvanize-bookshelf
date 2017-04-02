@@ -1,9 +1,9 @@
-'use strict';
+'use strict'
 
 exports.up = function(knex) {
   return knex.schema.createTable('books', (table) => {
     // id serial primary key
-    table.increments();
+    table.increments()
     table.string('title')
     .notNullable()
     .defaultTo('');
