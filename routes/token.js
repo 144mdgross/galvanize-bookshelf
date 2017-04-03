@@ -8,6 +8,7 @@ const router = express.Router();
 const Boom = require('boom')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+require('dotenv').config()
 
 router.use(cookieSession({
   name: 'token',
@@ -59,6 +60,7 @@ router.post('/', (req, res, next) => {
 })
 
 router.delete('/', (req, res, next) => {
+  // res.clearCookie
   req.session = null
   res.status(200)
     .set('Content-Type', 'application/json')
