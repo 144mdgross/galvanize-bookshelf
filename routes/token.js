@@ -9,12 +9,17 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 require('dotenv').config()
 
-// this is for cookie session instead of cookie parser
-// router.use(cookieSession({
-//   name: 'token',
-//   keys: ['Santa', 'hatesCookies'],
-//   maxAge: 24 * 60 * 60 * 1000
-// }))
+function badEmailBadPassword (req, res, next) {
+  let email = req.body.email
+  let password = req.body.password
+  if (email === "" || !email) {
+    return next(Boom.create(400, "Email must not be blank"))
+  } else if (password === "" || !password) {
+    return next(Boom.create(400, "Password must not be blank"))
+  } else {
+    next()
+  }
+}
 
 router.get('/', (req, res, _next) => {
   if (req.cookies.token) {
@@ -28,7 +33,7 @@ router.get('/', (req, res, _next) => {
   }
 })
 
-router.post('/', (req, res, next) => {
+router.post('/', badEmailBadPassword, (req, res, next) => {
   knex('users')
     .where('email', `${req.body.email}`)
     .then(compareUserInfo => {
