@@ -9,6 +9,35 @@
  const humps = require('humps');
  const boom = require('boom')
 
+  function letUserInput(req, res, _next) {
+    for (var key in req.body) {
+      if (!req.body.title) {
+        return _next(boom.create(400, 'Title must not be blank'))
+      } else if (!req.body.genre) {
+          return _next(boom.create(400, 'Genre must not be blank'))
+      } else if (!req.body.author) {
+          return _next(boom.create(400, 'Author must not be blank'))
+      } else if (!req.body.description) {
+          return _next(boom.create(400, 'Description must not be blank'))
+      } else if (!req.body.coverUrl) {
+          return _next(boom.create(400, 'Cover URL must not be blank'))
+      }
+    }
+    _next()
+  }
+
+ function needError (req, res, _next) {
+   if (holdError.length < 1) {
+     _next()
+   } else {
+     console.log("error array", holdError);
+     for (var i = 0; i < holdError.length; i++) {
+       return _next(boom.create(400, `${holdError[i]} must not be blank`))
+     }
+   }
+ }
+
+
  router.get('/', (req, res, _next) => {
    knex('books')
      .orderBy('title', 'asc')
@@ -42,30 +71,9 @@
    }
  })
 
-let allowed = []
-
- function letUserInput(req, res, _next) {
-
-   for (var key in req.body) {
-     if (!req.body.key) {
-       allowed.push(key)
-     }
-   }
-   _next()
- }
-
-function needError (req, res, _next) {
-  if (allowed.length < 1) {
-    _next()
-  } else {
-    for (var i = 0; i < allowed.length; i++) {
-      return _next(boom.create(400, `${allowed[i]} must not be blank`))
-    }
-  }
-}
 
 //  add letUserInput and needError into the post substack once I figure out how to get right key in error message.
- router.post('/', (req, res, _next) => {
+ router.post('/', letUserInput, needError, (req, res, _next) => {
 
    knex('books')
      .insert({
