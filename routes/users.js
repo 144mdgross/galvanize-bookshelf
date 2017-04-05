@@ -6,10 +6,10 @@ const hbs = require('handlebars')
 const humps = require('humps');
 let bcrypt = require('bcrypt');
 const saltRounds = 10;
-const myPlaintextPassword = 's0/\/\P4$$w0rD';
-const someOtherPlaintextPassword = 'not_bacon';
 const bodyParser = require('body-parser')
 const boom = require('boom')
+const jwt = require('jsonwebtoken')
+require('dotenv').config()
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
@@ -35,7 +35,18 @@ router.post('/', (req, res, next) => {
       }])
       .returning(['id', 'first_name', 'last_name', 'email'])
       .then(newUser => {
-        let camelUser = humps.camelizeKeys(newUser)
+
+        const camelUser = humps.camelizeKeys(newUser)
+        const jwtToken = jwt.sign({
+          id: camelUser.id,
+          firstName: camelUser.firstName,
+          lastName: camelUser.lastName,
+          email: camelUser.email
+        }, process.env.JWT_ONE)
+        res.cookie('token', jwtToken, {
+          httpOnly: true
+        })
+
         res.send(camelUser[0])
       })
       .catch(err => {
@@ -45,7 +56,7 @@ router.post('/', (req, res, next) => {
           return next(boom.create(400, 'Email must not be blank'))
         }
       })
-    }
+  }
 })
 
 module.exports = router;
