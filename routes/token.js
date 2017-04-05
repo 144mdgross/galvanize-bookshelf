@@ -2,7 +2,6 @@
 
 const express = require('express');
 const knex = require('../knex')
-const cookieSession = require('cookie-session')
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Boom = require('boom')
@@ -10,14 +9,15 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 require('dotenv').config()
 
-router.use(cookieSession({
-  name: 'token',
-  keys: ['Santa', 'hatesCookies'],
-  maxAge: 24 * 60 * 60 * 1000
-}))
+// this is for cookie session instead of cookie parser
+// router.use(cookieSession({
+//   name: 'token',
+//   keys: ['Santa', 'hatesCookies'],
+//   maxAge: 24 * 60 * 60 * 1000
+// }))
 
 router.get('/', (req, res, _next) => {
-  if (req.session.jwt) {
+  if (req.cookies.token) {
     res.status(200)
       .set('Content-Type', 'application/json')
       .send('true')
@@ -41,15 +41,16 @@ router.post('/', (req, res, next) => {
         const passes = bcrypt.compareSync(req.body.password, hash)
 
         if (passes) {
-          const token = jwt.sign({
+          const jwtToken = jwt.sign({
             email: email,
             id: id,
             firstName: firstName,
             lastName: lastName
           }, 'kirkegaard')
 
-          req.session.jwt = token
-          res.send(id, email, firstName, lastName)
+          res.cookie('token', jwtToken, {httpOnly: true})
+          // req.session.jwt = token
+          res.send({id: id, firstName: firstName, lastName: lastName, email:email})
         } else {
           return next(Boom.badRequest('Bad email or password'))
         }
@@ -60,11 +61,11 @@ router.post('/', (req, res, next) => {
 })
 
 router.delete('/', (req, res, next) => {
-  // res.clearCookie
-  req.session = null
-  res.status(200)
-    .set('Content-Type', 'application/json')
-    .send('true')
+  res.clearCookie('token')
+  // req.session = null
+  res.send(true)
+    // .set('Content-Type', 'application/json')
+    // .send('true')
 })
 
 module.exports = router;

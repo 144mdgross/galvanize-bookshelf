@@ -21,7 +21,7 @@ router.post('/', (req, res, next) => {
 
 
   if (!req.body.password || req.body.password.length < 8) {
-    return next(boom.create(400, 'Password must be at least 8 characters long'))
+    return next(boom.create(400, 'Email must not be blank'))
   } else {
     const salt = bcrypt.genSaltSync()
     const hash = bcrypt.hashSync(req.body.password, salt)
