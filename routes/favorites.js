@@ -7,6 +7,8 @@ const cookieSession = require('cookie-session')
 const Boom = require('boom')
 const bodyParser = require('body-parser')
 const humps = require('humps')
+const ev = require('express-validation')
+const validations = require('../validations/favorites')
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
@@ -65,6 +67,8 @@ router.get('/check', loggedIn, (req, res, next) => {
   }
 })
 
+
+// when I have ev(validations.post)...I can't add favorites
 router.post('/', loggedIn, (req, res, next) => {
   const token = req.cookies
   const favorite = +req.body.bookId

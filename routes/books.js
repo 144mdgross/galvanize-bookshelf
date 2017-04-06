@@ -8,6 +8,8 @@
  const hbs = require('handlebars')
  const humps = require('humps');
  const boom = require('boom')
+const ev = require('express-validation')
+const validations = require('../validations/books')
 
   function letUserInput(req, res, _next) {
     for (var key in req.body) {
@@ -71,9 +73,7 @@
    }
  })
 
-
-//  add letUserInput and needError into the post substack once I figure out how to get right key in error message.
- router.post('/', letUserInput, needError, (req, res, _next) => {
+ router.post('/', ev(validations.post), letUserInput, needError, (req, res, _next) => {
 
    knex('books')
      .insert({
@@ -91,7 +91,7 @@
        return next(boom.create(404, 'Not Found'))
      })
  })
- //
+
  router.patch('/:id', (req, res, _next) => {
    let body = req.body
    let id = +req.params.id

@@ -7,6 +7,8 @@ const router = express.Router();
 const Boom = require('boom')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
+const ev = require('express-validation')
+const validations = require('../validations/token')
 require('dotenv').config()
 
 function badEmailBadPassword (req, res, next) {
@@ -33,7 +35,7 @@ router.get('/', (req, res, _next) => {
   }
 })
 
-router.post('/', badEmailBadPassword, (req, res, next) => {
+router.post('/', ev(validations.post), badEmailBadPassword, (req, res, next) => {
   knex('users')
     .where('email', `${req.body.email}`)
     .then(compareUserInfo => {

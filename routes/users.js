@@ -9,12 +9,14 @@ const saltRounds = 10;
 const bodyParser = require('body-parser')
 const boom = require('boom')
 const jwt = require('jsonwebtoken')
+const ev = require('express-validation')
+const validations = require('../validations/users')
 require('dotenv').config()
 
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-router.post('/', (req, res, next) => {
+router.post('/', ev(validations.post), (req, res, next) => {
   let hasEmail = false
   let emailDb = false
   let email = req.body.email
