@@ -16,7 +16,9 @@ require('dotenv').config()
 // eslint-disable-next-line new-cap
 const router = express.Router();
 
-router.post('/', ev(validations.post), (req, res, next) => {
+
+//ev(validations.post),
+router.post('/', (req, res, next) => {
   let hasEmail = false
   let emailDb = false
   let email = req.body.email
