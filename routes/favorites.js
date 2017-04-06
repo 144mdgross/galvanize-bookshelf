@@ -68,7 +68,7 @@ router.get('/check', loggedIn, (req, res, next) => {
 })
 
 
-// when I have ev(validations.post)...I can't add favorites..However I am validating it somewhat too
+// when I have ev(validations.post)...I can't add favorites..However I do have my own validation protecting it
 router.post('/', loggedIn, (req, res, next) => {
   const token = req.cookies
   const favorite = +req.body.bookId
